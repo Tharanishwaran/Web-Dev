@@ -1,9 +1,10 @@
 import React from 'react'
 
 function User() {
-  return (
-    <div>User</div>
-  )
+  
+  return 
+    
+
 }
 
 export default User
