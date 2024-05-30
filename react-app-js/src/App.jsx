@@ -1,48 +1,36 @@
-import User from "./User";
+import React,{useState} from 'react';
 
 function App() {
+  
+  let [num, setNum] = useState(1);
+  
+
+  const handleAdd = () => {
 
 
 
-  const userData = {
+    setNum((currentval) => {
+     
+      return currentval + 1;
 
-   name : "akash",
-   age : 20,
-
+    });
+   
+    // setNum( num++);
+    // // num = num + 1
+  
 
   };
 
-  return (
-  
-  <div>
-  <h1>App hello</h1>
-  <User 
-  
-  Name = {userData.name} 
-  Age={userData.age}
-  
-  />
-  
-  </div>
-  );
 
+  return (
+    <div>
+
+     <h1>{num}</h1>
+     <button onClick={handleAdd}>click to Add</button>
+
+
+    </div>
+  )
 }
 
-export default App;
-
-
-// export function Hello() { //components always must return tags
-
-//   return <h1>Akash ak</h1>;
-   
-//  }
-
-
-
-//  export function Hey() {
-  
-//   return <h1>hey hitler</h1>
-
-//  }
-
-//  export default App;
+export default App
