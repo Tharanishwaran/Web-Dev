@@ -1,0 +1,34 @@
+In React.js, the `useEffect` hook is used to perform side effects in function components. Side effects can include things like data fetching, subscriptions, or manually changing the DOM. The `useEffect` hook runs after every render of the component, including the first render.
+
+The `useEffect` hook takes two arguments: a function and an optional dependency array. The function passed to `useEffect` is the side effect itself, and it will be executed after the component renders. If you provide a dependency array, React will only re-run the effect if one of the dependencies has changed since the last render. If you omit the dependency array, the effect will run after every render.
+
+Here's a basic example of using `useEffect` to fetch data:
+
+```jsx
+import React, { useState, useEffect } from 'react';
+
+function MyComponent() {
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    // This code will run after the component renders
+    fetch('https://api.example.com/data')
+      .then(response => response.json())
+      .then(data => setData(data));
+  }, []); // Empty dependency array means this effect runs only once, similar to componentDidMount
+
+  return (
+    <div>
+      {data ? (
+        <p>Data loaded: {data}</p>
+      ) : (
+        <p>Loading...</p>
+      )}
+    </div>
+  );
+}
+```
+
+In this example, the `useEffect` hook is used to fetch data from an API after the component is rendered for the first time. The `fetch` function is used to make the API request, and the retrieved data is stored in the component's state using `setData`.
+
+It's important to note that `useEffect` can also return a cleanup function, which will be called before the component is removed from the DOM or before the effect runs again. This is useful for cleaning up resources like subscriptions or timers to avoid memory leaks.
