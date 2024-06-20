@@ -1,4 +1,4 @@
-import Student from "./Student.jsx";
+import UserGreeting from "./UserGreeting";
 
 function App() {
   
@@ -6,9 +6,7 @@ function App() {
    
   <>
    
-  <Student name="ak" age={21} isStudent={true}></Student>
-  <Student name="akash" age={26} isStudent={true}></Student>
-  <Student></Student>
+  <UserGreeting isLoggedin={1} username="ak"></UserGreeting>
         
           
 

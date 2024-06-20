@@ -1,6 +1,7 @@
-.student{
+.welcome-msg{
 
- font-size: 1cm;
+ font-size: 2.5cm;
+ background-color: blueviolet;
  padding: 10px;
  border: 5px solid salmon ;
 
