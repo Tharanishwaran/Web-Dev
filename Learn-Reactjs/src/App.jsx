@@ -1,16 +1,11 @@
-import UserGreeting from "./UserGreeting";
+import Lists from "./Lists";
 
 function App() {
   
   return (
    
-  <>
-   
-  <UserGreeting isLoggedin={1} username="ak"></UserGreeting>
-        
-          
-
-  </>
+ 
+    <div className="text-5xl">App</div>
  
 
   );
