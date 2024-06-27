@@ -1,8 +1,9 @@
+import img from "../assets/react.svg"
 import React from 'react'
 
 const Navbar =() => {
   return (
-  <>
+
   
   <nav className="bg-indigo-700 border-b border-indigo-500">
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -14,7 +15,7 @@ const Navbar =() => {
             <a className="flex flex-shrink-0 items-center mr-4" href="/index.html">
               <img
                 className="h-10 w-auto"
-                src="images/logo.png"
+                src={img}
                 alt="React Jobs"
               />
               <span className="hidden md:block text-white text-2xl font-bold ml-2"
@@ -46,8 +47,8 @@ const Navbar =() => {
     </nav>
   
   
-  </>
-  )
-}
+
+  );
+};
 
 export default Navbar
