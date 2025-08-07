@@ -4,7 +4,44 @@
     <title>My Page</title>
   </head>
   <body>
-    <h1>Hello, DOM!</h1>
+    <h1 id="myid1">Hello, DOM!!!!!1</h1>
     <p>This is a paragraph.</p>
+
+    <ul>
+      <li class="item">Apple</li>
+      <li class="item">Banana</li>
+      <li class="item">Cherry</li>
+    </ul>
+    
+
+   <script>
+       
+      //  var myid1 = document.getElementById("myid");
+      //  console.log(myid1.textContent);
+      const title = document.getElementById("myid1");
+      title.style.color = "blue";
+      title.style.backgroundColor = "lightgray";
+      title.style.fontSize = "2rem";
+
+
+       const firstItem = document.querySelector(".item");
+       console.log(firstItem.textContent); // "Apple" (only the first one)
+
+
+       const allItems = document.querySelectorAll(".item");
+       console.log(allItems.length); // 3
+
+      // Loop through all items
+      allItems.forEach((item, index) => {
+      console.log(`Item ${index}: ${item.textContent}`);
+
+});
+
+
+
+   </script>
+ 
+
+
   </body>
 </html>
