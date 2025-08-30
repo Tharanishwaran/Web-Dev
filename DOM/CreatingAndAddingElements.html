@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Creating And Adding Elements</title>
+  </head>
+  
+  <body>
+   
+  
+    <h2>My Card</h2>
+    
+
+   <script>
+       
+
+  const div = document.createElement("div");
+  div.textContent = "hello worlddddd";
+  div.classList.add("Mycard");
+  div.id = "myid";
+  div.setAttribute("data-role", "card");
+
+
+  const parentNode = document.querySelector('h2'); // Select the h2 element
+  parentNode.prepend(div); // This will work
+
+  document.body.append(div);
+
+  parentNode.prepend(div);
+
+  document.body.prepend(div);
+
+//   parentNode.prepend(div);
+
+
+
+ 
+   </script>
+ 
+
+
+  </body>
+</html>
