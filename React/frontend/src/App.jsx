@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import SignupForm from './SignupForm';
 import Component from './Component';
+import Parent from './Parent';
 
 function App() {
   const [count, setCount] = useState(0);
@@ -25,6 +26,8 @@ function App() {
       < SignupForm></SignupForm>
       
       <Component></Component>
+
+      <Parent></Parent>
     </div>
   );
 }

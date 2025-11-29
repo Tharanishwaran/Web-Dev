@@ -1,19 +1,24 @@
-import { useState } from "react";
+import React, { useState, useRef } from 'react';
 
-const Component = () => {
-  const [count, setCount] = useState(0); // ✅ Fixed: initialize with 0, correct casing
+export const Component = () => {
+  const [count, setCount] = useState(0);
+  const renderCount = useRef(0);
 
-  const increment = () => {
-    setCount(count + 1); // ✅ Fixed: use setCount function properly
-    console.log(count); // ⚠️ This will log the OLD value (closure issue)
-  };
+  // Count renders without causing re-renders
+  renderCount.current++;
+  
+  console.log(`Component rendered ${renderCount.current} times`);
 
   return (
-    <>
+    <div className="p-4 border-2 border-blue-500">
       <p>Count: {count}</p>
-      <button onClick={increment}>Increment</button>
-    </>
+      <p>Renders: {renderCount.current}</p>
+      <button 
+        onClick={() => setCount(count + 1)}
+        className="bg-blue-500 text-white px-4 py-2 rounded"
+      >
+        Update Count (causes re-render)
+      </button>
+    </div>
   );
-}
-
-export default Component;
+};
