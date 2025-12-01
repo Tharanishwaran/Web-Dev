@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Browser Automation Suite</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --primary: #3b82f6;
+            --danger: #ef4444;
+            --success: #10b981;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', system-ui;
+            background: var(--bg);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 40px 0;
+            background: linear-gradient(135deg, var(--primary), #8b5cf6);
+            border-radius: 20px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .card {
+            background: var(--card);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid #334155;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.1);
+        }
+        
+        .card h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            color: #e2e8f0;
+            font-size: 1.3em;
+        }
+        
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin: 5px;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn:hover {
+            opacity: 0.9;
+            transform: scale(1.05);
+        }
+        
+        .btn-danger { background: var(--danger); }
+        .btn-success { background: var(--success); }
+        
+        .input-group {
+            margin: 15px 0;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            background: #334155;
+            border: 2px solid #475569;
+            border-radius: 8px;
+            color: white;
+            margin: 8px 0;
+        }
+        
+        .output {
+            background: #334155;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid var(--primary);
+            font-family: 'Cascadia Code', monospace;
+            font-size: 0.9em;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        
+        .status.online { background: #064e3b; color: #6ee7b7; }
+        .status.offline { background: #7f1d1d; color: #fca5a5; }
+        
+        .tab-container {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #334155;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 8px 8px 0 0;
+            background: #334155;
+        }
+        
+        .tab.active {
+            background: var(--primary);
+            font-weight: 600;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .console {
+            background: #1a1a1a;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            height: 300px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+        
+        .console-line {
+            margin: 5px 0;
+        }
+        
+        .console-line.info { color: #3b82f6; }
+        .console-line.error { color: #ef4444; }
+        .console-line.success { color: #10b981; }
+        
+        .feature-tag {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--primary);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.7em;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🖥️ Browser Automation Suite</h1>
+            <p>Advanced Browser Control & Diagnostics</p>
+            <div style="margin-top: 20px;">
+                <span class="status" id="globalStatus">Loading...</span>
+            </div>
+        </div>
+
+        <div class="tab-container">
+            <div class="tab active" onclick="switchTab('diagnostics')">🔍 Diagnostics</div>
+            <div class="tab" onclick="switchTab('automation')">⚙️ Automation</div>
+            <div class="tab" onclick="switchTab('storage')">💾 Storage</div>
+            <div class="tab" onclick="switchTab('network')">🌐 Network</div>
+            <div class="tab" onclick="switchTab('media')">🎥 Media</div>
+        </div>
+
+        <!-- DIAGNOSTICS TAB -->
+        <div id="diagnostics" class="tab-content active">
+            <div class="grid">
+                <!-- System Info Card -->
+                <div class="card">
+                    <span class="feature-tag">Advanced</span>
+                    <h3>🖥️ System Diagnostics</h3>
+                    <button class="btn" onclick="runFullDiagnostic()">
+                        🔍 Run Full Diagnostic
+                    </button>
+                    <button class="btn btn-success" onclick="exportDiagnostics()">
+                        📥 Export Report
+                    </button>
+                    <div class="output" id="systemInfo">
+                        Click "Run Full Diagnostic" to start
+                    </div>
+                </div>
+
+                <!-- Performance Monitor -->
+                <div class="card">
+                    <h3>📊 Performance Monitor</h3>
+                    <div class="input-group">
+                        <label>Memory Usage:</label>
+                        <div id="memoryUsage">Checking...</div>
+                        <label>CPU Cores:</label>
+                        <div id="cpuCores">Checking...</div>
+                    </div>
+                    <button class="btn" onclick="startPerformanceMonitor()">
+                        ▶️ Start Monitoring
+                    </button>
+                    <button class="btn btn-danger" onclick="stopPerformanceMonitor()">
+                        ⏹️ Stop Monitoring
+                    </button>
+                    <div id="performanceChart" style="height: 150px; margin-top: 15px; background: #334155; border-radius: 8px; padding: 10px;">
+                        <canvas id="perfCanvas"></canvas>
+                    </div>
+                </div>
+
+                <!-- Feature Detection -->
+                <div class="card">
+                    <h3>🔧 Feature Detection</h3>
+                    <button class="btn" onclick="detectFeatures()">
+                        🔎 Detect All Features
+                    </button>
+                    <div class="output" id="featureDetection">
+                        Feature detection not run yet
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AUTOMATION TAB -->
+        <div id="automation" class="tab-content">
+            <div class="grid">
+                <!-- Tab Control -->
+                <div class="card">
+                    <h3>📑 Tab Automation</h3>
+                    <div class="input-group">
+                        <input type="url" id="tabUrl" placeholder="https://example.com">
+                        <button class="btn" onclick="openControlledTab()">
+                            ↗️ Open Controlled Tab
+                        </button>
+                    </div>
+                    <div class="input-group">
+                        <button class="btn" onclick="listAllTabs()">
+                            📋 List All Tabs
+                        </button>
+                        <button class="btn btn-danger" onclick="closeAllTabs()">
+                            ❌ Close All Tabs
+                        </button>
+                    </div>
+                    <div class="output" id="tabInfo">
+                        No tab information available
+                    </div>
+                </div>
+
+                <!-- Browser Control -->
+                <div class="card">
+                    <h3>🎮 Browser Control</h3>
+                    <div class="input-group">
+                        <select id="browserAction">
+                            <option value="fullscreen">Toggle Fullscreen</option>
+                            <option value="print">Print Page</option>
+                            <option value="reload">Hard Reload</option>
+                            <option value="zoomIn">Zoom In</option>
+                            <option value="zoomOut">Zoom Out</option>
+                        </select>
+                        <button class="btn" onclick="executeBrowserAction()">
+                            ⚡ Execute Action
+                        </button>
+                    </div>
+                    <div class="input-group">
+                        <button class="btn" onclick="simulateUserActivity()">
+                            👆 Simulate User Activity
+                        </button>
+                        <button class="btn" onclick="injectScript()">
+                            📜 Inject Script
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Form Automation -->
+                <div class="card">
+                    <h3>📝 Form Automation</h3>
+                    <div class="input-group">
+                        <input type="text" id="autoName" placeholder="Name">
+                        <input type="email" id="autoEmail" placeholder="Email">
+                        <textarea id="autoMessage" placeholder="Message"></textarea>
+                        <button class="btn btn-success" onclick="autoFillForms()">
+                            🤖 Auto-Fill Forms
+                        </button>
+                    </div>
+                    <div class="output" id="formData">
+                        Form data will appear here
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MEDIA TAB -->
+        <div id="media" class="tab-content">
+            <div class="grid">
+                <!-- Screen Capture -->
+                <div class="card">
+                    <span class="feature-tag">Experimental</span>
+                    <h3>📸 Screen Capture</h3>
+                    <div class="input-group">
+                        <select id="captureType">
+                            <option value="tab">Capture Current Tab</option>
+                            <option value="window">Capture Window</option>
+                            <option value="desktop">Capture Desktop</option>
+                        </select>
+                        <button class="btn" onclick="startScreenCapture()">
+                            🎥 Start Capture
+                        </button>
+                    </div>
+                    <div id="capturePreview" style="margin-top: 15px;">
+                        <video id="screenVideo" autoplay muted width="100%" style="border-radius: 8px;"></video>
+                        <canvas id="screenCanvas" style="display: none;"></canvas>
+                    </div>
+                    <button class="btn btn-success" onclick="captureScreenshot()" style="margin-top: 10px;">
+                        📷 Take Screenshot
+                    </button>
+                </div>
+
+                <!-- Audio Control -->
+                <div class="card">
+                    <h3>🔊 Audio Analysis</h3>
+                    <div class="input-group">
+                        <button class="btn" onclick="startAudioAnalysis()">
+                            🎤 Start Audio Analysis
+                        </button>
+                        <button class="btn btn-danger" onclick="stopAudioAnalysis()">
+                            ⏹️ Stop Analysis
+                        </button>
+                    </div>
+                    <div id="audioVisualizer" style="height: 100px; background: #334155; border-radius: 8px; margin-top: 15px;">
+                        <canvas id="audioCanvas"></canvas>
+                    </div>
+                    <div class="output" id="audioInfo">
+                        Audio analysis not started
+                    </div>
+                </div>
+
+                <!-- WebRTC Stats -->
+                <div class="card">
+                    <h3>📡 WebRTC Diagnostics</h3>
+                    <button class="btn" onclick="getWebRTCStats()">
+                        📊 Get WebRTC Stats
+                    </button>
+                    <div class="output" id="webrtcStats">
+                        Click to get WebRTC connection statistics
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DEBUG CONSOLE -->
+        <div class="console" id="debugConsole">
+            <div class="console-line info">🚀 Browser Automation Suite v1.0</div>
+            <div class="console-line info">📅 Loaded at: <span id="loadTime"></span></div>
+            <div class="console-line success">✓ System ready</div>
+        </div>
+    </div>
+
+    <script>
+        // ===================== GLOBAL STATE =====================
+        const state = {
+            performanceMonitor: null,
+            audioContext: null,
+            analyser: null,
+            mediaStream: null,
+            screenStream: null,
+            diagnostics: {}
+        };
+
+        // ===================== UTILITIES =====================
+        function logToConsole(message, type = 'info') {
+            const console = document.getElementById('debugConsole');
+            const line = document.createElement('div');
+            line.className = `console-line ${type}`;
+            line.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            console.appendChild(line);
+            console.scrollTop = console.scrollHeight;
+        }
+
+        function updateGlobalStatus(status, type = 'online') {
+            const statusEl = document.getElementById('globalStatus');
+            statusEl.textContent = status;
+            statusEl.className = `status ${type}`;
+        }
+
+        function switchTab(tabName) {
+            // Update tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // Activate selected tab
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+            logToConsole(`Switched to ${tabName} tab`, 'info');
+        }
+
+        // ===================== DIAGNOSTICS =====================
+        async function runFullDiagnostic() {
+            logToConsole('Starting full diagnostic...', 'info');
+            updateGlobalStatus('Running diagnostics...', 'online');
+
+            const results = [];
+
+            // 1. Browser capabilities
+            results.push('=== BROWSER CAPABILITIES ===');
+            results.push(`User Agent: ${navigator.userAgent}`);
+            results.push(`Platform: ${navigator.platform}`);
+            results.push(`Languages: ${navigator.languages?.join(', ') || 'Unknown'}`);
+            results.push(`Cookies Enabled: ${navigator.cookieEnabled}`);
+            results.push(`Max Touch Points: ${navigator.maxTouchPoints || 0}`);
+
+            // 2. Screen information
+            results.push('\n=== SCREEN INFORMATION ===');
+            results.push(`Resolution: ${screen.width}x${screen.height}`);
+            results.push(`Color Depth: ${screen.colorDepth} bits`);
+            results.push(`Pixel Ratio: ${window.devicePixelRatio}`);
+            results.push(`Orientation: ${screen.orientation?.type || 'Unknown'}`);
+            results.push(`Available Height: ${screen.availHeight}px`);
+
+            // 3. Performance
+            results.push('\n=== PERFORMANCE ===');
+            results.push(`Memory (approx): ${performance.memory ? 
+                `${Math.round(performance.memory.usedJSHeapSize / 1024 / 1024)}MB used / 
+                 ${Math.round(performance.memory.totalJSHeapSize / 1024 / 1024)}MB total` : 
+                'Not available'}`);
+            results.push(`Navigation Timing: ${Math.round(performance.timing.loadEventEnd - performance.timing.navigationStart)}ms`);
+
+            // 4. Feature detection
+            results.push('\n=== FEATURE DETECTION ===');
+            const features = {
+                'Service Workers': 'serviceWorker' in navigator,
+                'WebGL': 'WebGLRenderingContext' in window,
+                'Web Workers': 'Worker' in window,
+                'Notifications': 'Notification' in window,
+                'Geolocation': 'geolocation' in navigator,
+                'LocalStorage': 'localStorage' in window,
+                'SessionStorage': 'sessionStorage' in window,
+                'IndexedDB': 'indexedDB' in window,
+                'Web Audio': 'AudioContext' in window || 'webkitAudioContext' in window,
+                'WebRTC': 'RTCPeerConnection' in window,
+                'Speech Recognition': 'SpeechRecognition' in window || 'webkitSpeechRecognition' in window,
+                'Payment Request': 'PaymentRequest' in window,
+                'Web Bluetooth': 'bluetooth' in navigator,
+                'Web USB': 'usb' in navigator,
+                'Clipboard API': 'clipboard' in navigator,
+                'Wake Lock': 'wakeLock' in navigator,
+                'Storage Manager': 'storage' in navigator,
+                'Network Information': 'connection' in navigator,
+                'Web Share': 'share' in navigator,
+                'File System Access': 'showOpenFilePicker' in window,
+                'Badging': 'setAppBadge' in navigator,
+                'Presentation': 'presentation' in navigator
+            };
+
+            for (const [feature, available] of Object.entries(features)) {
+                results.push(`${available ? '✅' : '❌'} ${feature}`);
+            }
+
+            // 5. Storage information
+            results.push('\n=== STORAGE ===');
+            results.push(`LocalStorage: ${localStorage.length} items`);
+            results.push(`SessionStorage: ${sessionStorage.length} items`);
+            results.push(`Cookies: ${document.cookie.length > 0 ? 'Present' : 'None'}`);
+            
+            if ('storage' in navigator && 'estimate' in navigator.storage) {
+                try {
+                    const estimate = await navigator.storage.estimate();
+                    results.push(`Quota: ${Math.round(estimate.quota / 1024 / 1024)}MB`);
+                    results.push(`Usage: ${Math.round(estimate.usage / 1024 / 1024)}MB`);
+                    results.push(`Usage Details: ${JSON.stringify(estimate.usageDetails || {})}`);
+                } catch (e) {
+                    results.push(`Storage estimate failed: ${e.message}`);
+                }
+            }
+
+            // 6. Network information
+            results.push('\n=== NETWORK ===');
+            results.push(`Online: ${navigator.onLine ? 'Yes' : 'No'}`);
+            if ('connection' in navigator) {
+                const conn = navigator.connection;
+                results.push(`Type: ${conn.effectiveType}`);
+                results.push(`Downlink: ${conn.downlink} Mbps`);
+                results.push(`RTT: ${conn.rtt} ms`);
+                results.push(`Save Data: ${conn.saveData ? 'Yes' : 'No'}`);
+            }
+
+            // Display results
+            const output = results.join('\n');
+            document.getElementById('systemInfo').textContent = output;
+            state.diagnostics.fullReport = output;
+
+            logToConsole('Full diagnostic completed', 'success');
+            updateGlobalStatus('Diagnostics complete', 'success');
+        }
+
+        function startPerformanceMonitor() {
+            if (state.performanceMonitor) {
+                clearInterval(state.performanceMonitor);
+            }
+
+            const canvas = document.getElementById('perfCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.parentElement.clientWidth - 20;
+            canvas.height = canvas.parentElement.clientHeight - 20;
+
+            const data = {
+                memory: [],
+                fps: [],
+                timestamps: []
+            };
+
+            let lastTime = performance.now();
+            let frames = 0;
+
+            state.performanceMonitor = setInterval(() => {
+                // Track FPS
+                frames++;
+                const now = performance.now();
+                if (now >= lastTime + 1000) {
+                    const fps = Math.round((frames * 1000) / (now - lastTime));
+                    data.fps.push(fps);
+                    frames = 0;
+                    lastTime = now;
+                }
+
+                // Track memory if available
+                if (performance.memory) {
+                    data.memory.push(performance.memory.usedJSHeapSize / 1024 / 1024); // MB
+                }
+
+                data.timestamps.push(new Date().toLocaleTimeString());
+
+                // Keep only last 60 data points
+                const maxPoints = 60;
+                if (data.memory.length > maxPoints) data.memory.shift();
+                if (data.fps.length > maxPoints) data.fps.shift();
+                if (data.timestamps.length > maxPoints) data.timestamps.shift();
+
+                // Draw chart
+                drawPerformanceChart(ctx, data, canvas.width, canvas.height);
+
+                // Update text info
+                document.getElementById('memoryUsage').textContent = 
+                    performance.memory ? 
+                    `Used: ${Math.round(data.memory[data.memory.length - 1] || 0)}MB` : 
+                    'Not available';
+
+                document.getElementById('cpuCores').textContent = 
+                    `Cores: ${navigator.hardwareConcurrency || 'Unknown'}`;
+
+            }, 100);
+
+            logToConsole('Performance monitor started', 'success');
+        }
+
+        function drawPerformanceChart(ctx, data, width, height) {
+            ctx.clearRect(0, 0, width, height);
+
+            const padding = 20;
+            const chartWidth = width - padding * 2;
+            const chartHeight = height - padding * 2;
+
+            // Draw grid
+            ctx.strokeStyle = '#475569';
+            ctx.lineWidth = 1;
+
+            // Vertical lines
+            for (let i = 0; i <= 5; i++) {
+                const x = padding + (i * chartWidth / 5);
+                ctx.beginPath();
+                ctx.moveTo(x, padding);
+                ctx.lineTo(x, height - padding);
+                ctx.stroke();
+            }
+
+            // Horizontal lines
+            for (let i = 0; i <= 5; i++) {
+                const y = padding + (i * chartHeight / 5);
+                ctx.beginPath();
+                ctx.moveTo(padding, y);
+                ctx.lineTo(width - padding, y);
+                ctx.stroke();
+            }
+
+            // Draw memory line
+            if (data.memory.length > 1) {
+                ctx.strokeStyle = '#3b82f6';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+
+                const maxMemory = Math.max(...data.memory, 1);
+                
+                for (let i = 0; i < data.memory.length; i++) {
+                    const x = padding + (i / (data.memory.length - 1)) * chartWidth;
+                    const y = height - padding - (data.memory[i] / maxMemory) * chartHeight;
+                    
+                    if (i === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                }
+                ctx.stroke();
+            }
+
+            // Draw FPS line
+            if (data.fps.length > 1) {
+                ctx.strokeStyle = '#10b981';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+
+                const maxFPS = Math.max(...data.fps, 60);
+                
+                for (let i = 0; i < data.fps.length; i++) {
+                    const x = padding + (i / (data.fps.length - 1)) * chartWidth;
+                    const y = height - padding - (data.fps[i] / maxFPS) * chartHeight;
+                    
+                    if (i === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                }
+                ctx.stroke();
+            }
+        }
+
+        function stopPerformanceMonitor() {
+            if (state.performanceMonitor) {
+                clearInterval(state.performanceMonitor);
+                state.performanceMonitor = null;
+                logToConsole('Performance monitor stopped', 'info');
+            }
+        }
+
+        function detectFeatures() {
+            const features = [
+                { name: 'Broadcast Channel', test: () => 'BroadcastChannel' in window },
+                { name: 'Web Crypto', test: () => 'crypto' in window && 'subtle' in crypto },
+                { name: 'Web Animations', test: () => 'animate' in document.createElement('div') },
+                { name: 'Resize Observer', test: () => 'ResizeObserver' in window },
+                { name: 'Intersection Observer', test: () => 'IntersectionObserver' in window },
+                { name: 'Mutation Observer', test: () => 'MutationObserver' in window },
+                { name: 'Performance Observer', test: () => 'PerformanceObserver' in window },
+                { name: 'Web Locks', test: () => 'locks' in navigator },
+                { name: 'Web NFC', test: () => 'NDEFReader' in window },
+                { name: 'Web Serial', test: () => 'serial' in navigator },
+                { name: 'Web MIDI', test: () => 'requestMIDIAccess' in navigator },
+                { name: 'Gamepad', test: () => 'getGamepads' in navigator },
+                { name: 'Vibration', test: () => 'vibrate' in navigator },
+                { name: 'Device Orientation', test: () => 'DeviceOrientationEvent' in window },
+                { name: 'Device Motion', test: () => 'DeviceMotionEvent' in window },
+                { name: 'Screen Orientation', test: () => 'screen' in window && 'orientation' in screen },
+                { name: 'Fullscreen', test: () => 'fullscreenEnabled' in document },
+                { name: 'Pointer Events', test: () => 'PointerEvent' in window },
+                { name: 'Touch Events', test: () => 'ontouchstart' in window },
+                { name: 'Web Speech Synthesis', test: () => 'speechSynthesis' in window }
+            ];
+
+            let output = '<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">';
+            
+            features.forEach(feature => {
+                const available = feature.test();
+                output += `
+                    <div style="padding: 8px; background: ${available ? '#064e3b' : '#7f1d1d'}; 
+                                border-radius: 6px; font-size: 0.9em;">
+                        ${available ? '✅' : '❌'} ${feature.name}
+                    </div>
+                `;
+            });
+            
+            output += '</div>';
+            document.getElementById('featureDetection').innerHTML = output;
+            logToConsole(`Detected ${features.filter(f => f.test()).length}/${features.length} features`, 'success');
+        }
+
+        // ===================== AUTOMATION =====================
+        function openControlledTab() {
+            const url = document.getElementById('tabUrl').value || 'https://example.com';
+            
+            // Create popup with specific features
+            const features = [
+                'width=800',
+                'height=600',
+                'left=' + (screen.width - 800) / 2,
+                'top=' + (screen.height - 600) / 2,
+                'menubar=no',
+                'toolbar=no',
+                'location=no',
+                'status=no',
+                'resizable=yes',
+                'scrollbars=yes'
+            ].join(',');
+
+            const newWindow = window.open(url, '_blank', features);
+            
+            if (newWindow) {
+                // Try to inject some controlling script
+                setTimeout(() => {
+                    try {
+                        newWindow.document.title = `Controlled: ${url}`;
+                        newWindow.document.body.style.backgroundColor = '#f0f0f0';
+                        logToConsole(`Controlled tab opened: ${url}`, 'success');
+                    } catch (e) {
+                        logToConsole(`Cannot modify cross-origin tab: ${e.message}`, 'error');
+                    }
+                }, 1000);
+            } else {
+                logToConsole('Failed to open tab (might be blocked by popup blocker)', 'error');
+            }
+        }
+
+        function listAllTabs() {
+            // Note: Cannot actually list tabs from other windows due to security
+            // This is a simulated version for demonstration
+            const tabInfo = `
+                <strong>Current Window:</strong><br>
+                • This tab: ${document.title}<br>
+                • URL: ${window.location.href}<br>
+                <br>
+                <strong>Note:</strong> Due to browser security restrictions,<br>
+                JavaScript cannot access tabs in other windows.<br>
+                <br>
+                <strong>Workarounds:</strong><br>
+                1. Use browser extensions<br>
+                2. Implement within same origin<br>
+                3. Use window.opener reference
+            `;
+            
+            document.getElementById('tabInfo').innerHTML = tabInfo;
+            logToConsole('Tab information displayed (simulated)', 'info');
+        }
+
+        function executeBrowserAction() {
+            const action = document.getElementById('browserAction').value;
+            
+            switch(action) {
+                case 'fullscreen':
+                    if (!document.fullscreenElement) {
+                        document.documentElement.requestFullscreen().catch(e => {
+                            logToConsole(`Fullscreen failed: ${e.message}`, 'error');
+                        });
+                    } else {
+                        document.exitFullscreen();
+                    }
+                    logToConsole('Toggled fullscreen mode', 'success');
+                    break;
+                    
+                case 'print':
+                    window.print();
+                    logToConsole('Print dialog opened', 'success');
+                    break;
+                    
+                case 'reload':
+                    location.reload(true);
+                    break;
+                    
+                case 'zoomIn':
+                    document.body.style.zoom = (parseFloat(document.body.style.zoom) || 1) + 0.1;
+                    logToConsole(`Zoom: ${document.body.style.zoom}`, 'info');
+                    break;
+                    
+                case 'zoomOut':
+                    document.body.style.zoom = Math.max(0.5, (parseFloat(document.body.style.zoom) || 1) - 0.1);
+                    logToConsole(`Zoom: ${document.body.style.zoom}`, 'info');
+                    break;
+            }
+        }
+
+        function simulateUserActivity() {
+            // Create a fake click event
+            const event = new MouseEvent('click', {
+                view: window,
+                bubbles: true,
+                cancelable: true
+            });
+
+            // Dispatch on body
+            document.body.dispatchEvent(event);
+            
+            // Create keyboard events
+            const keyEvent = new KeyboardEvent('keydown', {
+                key: ' ',
+                code: 'Space',
+                keyCode: 32
+            });
+            document.dispatchEvent(keyEvent);
+
+            logToConsole('Simulated user activity (click + space key)', 'success');
+        }
+
+        function injectScript() {
+            const script = `
+                console.log('🔧 Script injected from Automation Suite');
+                document.title = '🎮 Controlled by Automation Suite';
+                
+                // Add watermark
+                const watermark = document.createElement('div');
+                watermark.style.cssText = \`
+                    position: fixed;
+                    bottom: 10px;
+                    right: 10px;
+                    background: rgba(0,0,0,0.7);
+                    color: white;
+                    padding: 5px 10px;
+                    border-radius: 5px;
+                    font-size: 12px;
+                    z-index: 999999;
+                \`;
+                watermark.textContent = '🤖 Controlled by Automation Suite';
+                document.body.appendChild(watermark);
+                
+                // Make all inputs have a border
+                document.querySelectorAll('input, textarea, select').forEach(el => {
+                    el.style.border = '2px solid #3b82f6';
+                });
+            `;
+            
+            try {
+                // Create script element and inject
+                const scriptEl = document.createElement('script');
+                scriptEl.textContent = script;
+                document.head.appendChild(scriptEl);
+                logToConsole('Control script injected successfully', 'success');
+            } catch (e) {
+                logToConsole(`Script injection failed: ${e.message}`, 'error');
+            }
+        }
+
+        function autoFillForms() {
+            const name = document.getElementById('autoName').value || 'John Doe';
+            const email = document.getElementById('autoEmail').value || 'john@example.com';
+            const message = document.getElementById('autoMessage').value || 'Hello from Automation Suite!';
+
+            // Store in localStorage for demonstration
+            const formData = {
+                name,
+                email,
+                message,
+                timestamp: new Date().toISOString()
+            };
+
+            localStorage.setItem('lastFormData', JSON.stringify(formData, null, 2));
+            
+            // Display stored data
+            document.getElementById('formData').textContent = 
+                `Stored form data:\n${JSON.stringify(formData, null, 2)}`;
+            
+            logToConsole(`Form data stored: ${name} <${email}>`, 'success');
+        }
+
+        // ===================== MEDIA CONTROLS =====================
+        async function startScreenCapture() {
+            try {
+                const captureType = document.getElementById('captureType').value;
+                const constraints = {
+                    video: {
+                        cursor: 'always'
+                    }
+                };
+
+                if (captureType === 'tab') {
+                    constraints.video.displaySurface = 'browser';
+                } else if (captureType === 'window') {
+                    constraints.video.displaySurface = 'window';
+                }
+
+                state.screenStream = await navigator.mediaDevices.getDisplayMedia(constraints);
+                
+                const video = document.getElementById('screenVideo');
+                video.srcObject = state.screenStream;
+                
+                logToConsole(`Screen capture started: ${captureType}`, 'success');
+            } catch (error) {
+                logToConsole(`Screen capture failed: ${error.message}`, 'error');
+            }
+        }
+
+        function captureScreenshot() {
+            const video = document.getElementById('screenVideo');
+            const canvas = document.getElementById('screenCanvas');
+            const ctx = canvas.getContext('2d');
+
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            ctx.drawImage(video, 0, 0);
+
+            // Create download link
+            const link = document.createElement('a');
+            link.download = `screenshot-${Date.now()}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+
+            logToConsole('Screenshot captured and downloaded', 'success');
+        }
+
+        async function startAudioAnalysis() {
+            try {
+                state.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                state.analyser = state.audioContext.createAnalyser();
+                
+                state.mediaStream = await navigator.mediaDevices.getUserMedia({ 
+                    audio: true, 
+                    video: false 
+                });
+
+                const source = state.audioContext.createMediaStreamSource(state.mediaStream);
+                source.connect(state.analyser);
+                
+                state.analyser.fftSize = 256;
+                const bufferLength = state.analyser.frequencyBinCount;
+                const dataArray = new Uint8Array(bufferLength);
+
+                const canvas = document.getElementById('audioCanvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = canvas.parentElement.clientWidth;
+                canvas.height = canvas.parentElement.clientHeight;
+
+                function draw() {
+                    if (!state.analyser) return;
+
+                    requestAnimationFrame(draw);
+                    state.analyser.getByteFrequencyData(dataArray);
+
+                    ctx.fillStyle = '#1e293b';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                    const barWidth = (canvas.width / bufferLength) * 2.5;
+                    let barHeight;
+                    let x = 0;
+
+                    for (let i = 0; i < bufferLength; i++) {
+                        barHeight = dataArray[i] * 1.5;
+
+                        ctx.fillStyle = `rgb(${barHeight + 100}, 50, 150)`;
+                        ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+
+                        x += barWidth + 1;
+                    }
+
+                    // Update audio info
+                    const average = dataArray.reduce((a, b) => a + b) / dataArray.length;
+                    document.getElementById('audioInfo').textContent = 
+                        `Audio Level: ${Math.round(average)}/255 | Frequency Bins: ${bufferLength}`;
+                }
+
+                draw();
+                logToConsole('Audio analysis started', 'success');
+
+            } catch (error) {
+                logToConsole(`Audio analysis failed: ${error.message}`, 'error');
+            }
+        }
+
+        function stopAudioAnalysis() {
+            if (state.mediaStream) {
+                state.mediaStream.getTracks().forEach(track => track.stop());
+            }
+            if (state.audioContext) {
+                state.audioContext.close();
+            }
+            state.mediaStream = null;
+            state.audioContext = null;
+            state.analyser = null;
+            
+            logToConsole('Audio analysis stopped', 'info');
+        }
+
+        function getWebRTCStats() {
+            if (!state.mediaStream) {
+                document.getElementById('webrtcStats').textContent = 
+                    'Start audio analysis first to get WebRTC stats';
+                return;
+            }
+
+            // This would require a real WebRTC connection
+            const stats = `
+                <strong>WebRTC Statistics (Simulated):</strong><br>
+                • Audio Tracks: ${state.mediaStream.getAudioTracks().length}<br>
+                • Video Tracks: ${state.mediaStream.getVideoTracks().length}<br>
+                • Active: ${state.mediaStream.active ? 'Yes' : 'No'}<br>
+                • ID: ${state.mediaStream.id}<br>
+                <br>
+                <strong>For real stats:</strong><br>
+                Implement a WebRTC peer connection<br>
+                and use RTCPeerConnection.getStats()
+            `;
+            
+            document.getElementById('webrtcStats').innerHTML = stats;
+            logToConsole('WebRTC stats displayed (simulated)', 'info');
+        }
+
+        // ===================== INITIALIZATION =====================
+        function init() {
+            // Set load time
+            document.getElementById('loadTime').textContent = new Date().toLocaleString();
+            
+            // Initialize canvas if needed
+            const perfCanvas = document.getElementById('perfCanvas');
+            if (perfCanvas) {
+                perfCanvas.width = perfCanvas.parentElement.clientWidth - 20;
+                perfCanvas.height = perfCanvas.parentElement.clientHeight - 20;
+            }
+            
+            // Update global status
+            updateGlobalStatus('Ready', 'online');
+            
+            // Start performance monitoring automatically
+            startPerformanceMonitor();
+            
+            // Log initialization
+            logToConsole('Browser Automation Suite initialized', 'success');
+            logToConsole(`Browser: ${navigator.userAgent.split(') ')[0].split('(')[1]}`, 'info');
+            logToConsole(`Screen: ${screen.width}x${screen.height}`, 'info');
+            
+            // Export diagnostics function
+            window.exportDiagnostics = function() {
+                if (!state.diagnostics.fullReport) {
+                    alert('Run diagnostics first!');
+                    return;
+                }
+                
+                const blob = new Blob([state.diagnostics.fullReport], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `browser-diagnostics-${Date.now()}.txt`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                logToConsole('Diagnostics exported', 'success');
+            };
+            
+            // Close all tabs function
+            window.closeAllTabs = function() {
+                if (confirm('Close all tabs in this window?')) {
+                    // Can't actually close all tabs due to security
+                    // This would only work for tabs we opened
+                    logToConsole('Cannot close tabs due to browser security', 'error');
+                    alert('Due to browser security, JavaScript cannot close tabs not opened by it.');
+                }
+            };
+        }
+
+        // Start when page loads
+        document.addEventListener('DOMContentLoaded', init);
+
+        // Handle beforeunload
+        window.addEventListener('beforeunload', () => {
+            if (state.performanceMonitor) {
+                clearInterval(state.performanceMonitor);
+            }
+            if (state.mediaStream) {
+                state.mediaStream.getTracks().forEach(track => track.stop());
+            }
+        });
+    </script>
+</body>
+</html>
