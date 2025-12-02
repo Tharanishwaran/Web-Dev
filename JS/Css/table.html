@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CSS Table</title>
+    <style>
+        .table {
+            display: table;
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .row {
+            display: table-row;
+        }
+        
+        .cell {
+            display: table-cell;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+        
+        .header {
+            font-weight: bold;
+            background: #a89797;
+        }
+    </style>
+</head>
+<body>
+    <h3>CSS Display Table</h3>
+    
+    <div class="table">
+        <div class="row header">
+            <div class="cell">Name</div>
+            <div class="cell">Age</div>
+            <div class="cell">City</div>
+        </div>
+        <div class="row">
+            <div class="cell">John</div>
+            <div class="cell">25</div>
+            <div class="cell">NYC</div>
+        </div>
+        <div class="row">
+            <div class="cell">Sarah</div>
+            <div class="cell">30</div>
+            <div class="cell">London</div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+  
+      body{
+        margin: 0;
+        min-height : 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+        header, footer {
+            background: #333;
+            color: white;
+            padding: 20px;
+        }
+
+    .container{
+        display: flex;
+        background-color: lightblue;
+        flex-wrap: wrap ;
+        padding: 10px;
+        gap: 10px;
+        justify-content: center;
+        justify-items: center;
+        height: 200px;
+        /* flex-direction:  */
+    }
+
+
+    .box {
+        background-color: coral;
+        padding: 20px;
+        color: white;
+        /* order: -1; */
+        flex:1 1 10px;
+
+        
+    }
+
+    /* control indiviual boxes */
+    /* .box:nth-child(1) {
+        flex-grow: 1;
+    }
+
+      .box:nth-child(2) {
+        flex-grow: 2;
+    } */
+
+   
+</style>
+</head>
+
+<body>
+ <h3>flex box demo</h3>
+ <div class="container">
+    <div class="box">Box1</div>
+    <div class="box">Box 2</div>
+    <div class="box">Box 3</div>
+   </div> 
+</body>
+</html>

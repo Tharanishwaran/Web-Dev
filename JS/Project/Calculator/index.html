@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simple Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #f3f3f3;
+    }
+    .calculator {
+      width: 260px;
+      background: rgb(78, 76, 76);
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    }
+    .display {
+      width: 100%;
+      height: 50px;
+      font-size: 22px;
+      text-align: right;
+      padding: 10px;
+      border: none;
+      background: #eee;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+    .buttons button {
+      width: 55px;
+      height: 55px;
+      margin: 5px;
+      font-size: 20px;
+      border: none;
+      cursor: pointer;
+      border-radius: 10px;
+      background: #dcd5d5;
+    }
+    .buttons button:hover {
+      background: #ccc;
+    }
+    .operator {
+      background: #ffb84d;
+    }
+    .equal {
+      background: #4caf50;
+      color: rgb(179, 29, 29);
+    }
+    .clear {
+      background: #e53935;
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="calculator">
+    <input type="text" class="display" id="display" disabled>
+
+    <div class="buttons">
+      <button onclick="clearDisplay()" class="clear">C</button>
+      <button onclick="appendValue('/')">÷</button>
+      <button onclick="appendValue('*')">×</button>
+      <button onclick="appendValue('-')">−</button>
+
+      <button onclick="appendValue('7')">7</button>
+      <button onclick="appendValue('8')">8</button>
+      <button onclick="appendValue('9')">9</button>
+      <button onclick="appendValue('+')" class="operator">+</button>
+
+      <button onclick="appendValue('4')">4</button>
+      <button onclick="appendValue('5')">5</button>
+      <button onclick="appendValue('6')">6</button>
+
+      <button onclick="appendValue('1')">1</button>
+      <button onclick="appendValue('2')">2</button>
+      <button onclick="appendValue('3')">3</button>
+
+      <button onclick="appendValue('0')">0</button>
+      <button onclick="appendValue('.')">.</button>
+      <button onclick="calculate()" class="equal">=</button>
+ 
+    </div>
+  </div>
+
+  <script>
+const display = document.getElementById("display");
+
+  display.value = "0";
+
+  function appendValue(val) {
+    display.value += val;
+  }
+
+  function clearDisplay() {
+    display.value = "";
+  }
+
+  // -------------------------------
+  //  SAFE USER-DEFINED CALCULATOR
+  // -------------------------------
+  function calculateExpression(expr) {
+    const numbers = [];
+    const operators = [];
+
+    let current = "";
+
+    for (let i = 0; i < expr.length; i++) {
+      const ch = expr[i];
+
+      if (!isNaN(ch) || ch === ".") {
+        current += ch;
+      } else {
+        numbers.push(parseFloat(current));
+        current = "";
+        operators.push(ch);
+      }
+    }
+    numbers.push(parseFloat(current));
+
+    for (let i = 0; i < operators.length; i++) {
+      if (operators[i] === "*" || operators[i] === "/") {
+        const a = numbers[i];
+        const b = numbers[i + 1];
+
+        const result = operators[i] === "*" ? a * b : a / b;
+
+        numbers.splice(i, 2, result);
+        operators.splice(i, 1);
+        i--;
+      }
+    }
+
+    let result = numbers[0];
+    for (let i = 0; i < operators.length; i++) {
+      if (operators[i] === "+") result += numbers[i + 1];
+      if (operators[i] === "-") result -= numbers[i + 1];
+    }
+
+    return result;
+  }
+
+  // -------------------------------
+  //  REPLACED CALCULATE FUNCTION
+  // -------------------------------
+  function calculate() {
+    try {
+      display.value = calculateExpression(display.value);
+    } catch (e) {
+      display.value = "Error";
+    }
+  }
+  </script>
+
+</body>
+</html>
