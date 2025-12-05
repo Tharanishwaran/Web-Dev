@@ -72,3 +72,25 @@ app.get('/api/profile', authenticateToken, async (req, res) => {
     }
 });
 
+
+Session Workflow:
+Login: User submits credentials → Server validates → Creates session → Sends cookie
+
+Storage: Session data stored on SERVER (files, DB, Redis)
+
+Authentication: Browser sends cookie → Server looks up session data
+
+State: Stateful (server maintains state)
+
+Logout: Destroy session on server
+
+JWT Workflow:
+Login: User submits credentials → Server validates → Creates JWT → Sends token
+
+Storage: Token stored on CLIENT (localStorage, cookies, memory)
+
+Authentication: Client sends token → Server verifies signature
+
+State: Stateless (all data in token)
+
+Logout: Simply discard token (no server cleanup needed)
